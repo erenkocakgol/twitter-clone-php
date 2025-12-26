@@ -1,0 +1,58 @@
+# =========================================================
+# X-Auth-Token header'ını PHP'ye geçir
+# =========================================================
+
+<IfModule mod_setenvif.c>
+    SetEnvIf X-Auth-Token "(.*)" HTTP_X_AUTH_TOKEN=$1
+</IfModule>
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # 🔐 X-Auth-Token header'ını PHP'ye geçir
+    RewriteCond %{HTTP:X-Auth-Token} .
+    RewriteRule .* - [E=HTTP_X_AUTH_TOKEN:%{HTTP:X-Auth-Token}]
+
+    RewriteBase /
+    Options -MultiViews
+
+    # -------------------------------------------------------
+    # 1. ADMIN API ROUTING
+    # -------------------------------------------------------
+    RewriteCond %{REQUEST_URI} ^/api/admin
+    RewriteCond %{REQUEST_URI} !^/api/admin\.php$
+    RewriteRule .* /api/admin.php [QSA,L]
+
+    # -------------------------------------------------------
+    # 2. GENEL API ROUTING
+    # -------------------------------------------------------
+    RewriteCond %{REQUEST_URI} ^/api/
+    RewriteCond %{REQUEST_URI} !^/api/admin
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule .* /api/index.php [QSA,L]
+
+    # -------------------------------------------------------
+    # 3. SPA ROUTING
+    # -------------------------------------------------------
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^.*$ /index.html [L]
+</IfModule>
+
+# =========================================================
+# Cache kapatma
+# =========================================================
+<IfModule mod_headers.c>
+    Header set Cache-Control "no-cache, no-store, must-revalidate"
+    Header set Pragma "no-cache"
+    Header set Expires 0
+</IfModule>
+
+# =========================================================
+# Güvenlik
+# =========================================================
+Options -Indexes
+
+<FilesMatch "\.(env|sql|log|md|bak|ini|git|config)$">
+    Require all denied
+</FilesMatch>
