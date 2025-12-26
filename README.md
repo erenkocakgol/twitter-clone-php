@@ -935,6 +935,6 @@ SOFTWARE.
 
 **[⬆ Başa Dön](#-sanatsepet-backend-api)**
 
-Made with ❤️ by [KristalSoft](https://kristalsoft.com.tr)
+Made with ❤️ by [Eren Koçakgöl](https://www.erenkocakgol.com.tr)
 
 </div>
